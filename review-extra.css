@@ -11,4 +11,7 @@
 .original-row-link{display:inline-block;color:#167451;font:600 10px 'DM Sans',sans-serif;text-decoration:none;white-space:nowrap}
 .original-row-link:hover{text-decoration:underline;color:#105f42}
 .original-unavailable{color:#a0aaa3;font-size:10px}
+.review-action-buttons{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:auto}
+.drawer-actions .review-action-buttons .secondary{height:37px;padding:0 11px;font:600 10px 'DM Sans',sans-serif}
+@media(max-width:460px){.review-action-buttons{gap:5px}.drawer-actions .review-action-buttons .secondary{padding:0 8px;font-size:9px}.review-action-buttons .primary{padding:0 9px;font-size:9px}}
 @media(max-width:460px){.line-edit-row{grid-template-columns:minmax(70px,1.25fr) minmax(42px,.45fr) minmax(58px,.85fr) minmax(58px,.85fr) 18px;gap:4px}.line-edit-field{font-size:8px}.line-edit-row .line-edit-field input{height:31px;padding:0 4px;font-size:9px}.line-edit-row .remove-line{width:18px;height:31px}}

@@ -68,6 +68,7 @@ export default function App() {
   function updateField(key, value) { setFields(current => ({ ...current, [key]: value })); }
   async function saveReview(event) {
     event.preventDefault(); if (!selectedId || savingReviewRef.current) return;
+    const forceCompleted = event.nativeEvent.submitter?.value === 'force-completed';
     const toOptionalNumber = value => value == null || String(value).trim() === '' ? null : Number(value);
     const payload = { ...fields, lineItems: lineItems.map(item => ({ ...item, quantity: toOptionalNumber(item.quantity), unitPrice: toOptionalNumber(item.unitPrice), amount: toOptionalNumber(item.amount) })) };
     for (const key of ['subtotal','tax','total']) payload[key] = toOptionalNumber(payload[key]);
@@ -75,12 +76,12 @@ export default function App() {
     savingReviewRef.current = true;
     setSavingReview(true);
     try {
-      const result = await api(`/api/documents/${encodeURIComponent(selectedId)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fields: payload, documentType }) });
+      const result = await api(`/api/documents/${encodeURIComponent(selectedId)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fields: payload, documentType, forceCompleted }) });
       const saved = result.document.fields || payload;
       setDetail(result.document);
       setFields({ invoiceNumber: saved.invoiceNumber ?? '', invoiceDate: saved.invoiceDate ?? '', supplierName: saved.supplierName ?? '', customerName: saved.customerName ?? '', subtotal: saved.subtotal ?? '', tax: saved.tax ?? '', total: saved.total ?? '', currency: saved.currency ?? '' });
       setLineItems(saved.lineItems || []);
-      notify('Review saved.');
+      notify(forceCompleted ? 'Review saved and document marked Completed.' : 'Review saved.');
       await refresh();
     } catch (error) { notify(error.message); }
     finally { savingReviewRef.current = false; setSavingReview(false); }
@@ -128,7 +129,7 @@ export default function App() {
           <div className="source-text"><details><summary>View extracted text</summary><pre>{detail.extractedText||'No text extracted yet.'}</pre></details><details className="history-details"><summary>Processing history</summary>{(detail.history||[]).slice().reverse().map((entry,i)=><div className="history-item" key={i}><b>{entry.status}</b><span>{entry.message}</span><time>{escDate(entry.at)}</time></div>)}</details></div>
         </form></>}
     </aside>
-    {detail&&selectedId&&<div className="drawer-actions">{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<button type="submit" form="documentReviewForm" className="primary" disabled={savingReview}>{savingReview?'Saving review…':'Save review'}</button></div>}
+    {detail&&selectedId&&<div className="drawer-actions">{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<div className="review-action-buttons"><button type="submit" form="documentReviewForm" className="secondary" disabled={savingReview}>{savingReview?'Saving…':'Save review'}</button>{documentType==='invoice'&&<button type="submit" form="documentReviewForm" name="reviewAction" value="force-completed" className="primary" disabled={savingReview}>{savingReview?'Saving…':'Save & mark complete'}</button>}</div></div>}
     <div className={`toast ${toast?'show':''}`}>{toast}</div>
   </div>;
 }
