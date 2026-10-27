@@ -101,7 +101,16 @@ function createSession(userId, req, res) {
 }
 function findUserByEmail(email) { return rows('SELECT * FROM users WHERE email=? LIMIT 1', [email])[0] || null; }
 function hasAdminPin() { return rows("SELECT key FROM app_settings WHERE key='admin_pin_hash'").length > 0; }
-function authConfig() { return { bootstrapAvailable: rows('SELECT id FROM users LIMIT 1').length === 0, registrationAvailable: false, adminPinConfigured: hasAdminPin(), googleLoginAvailable: Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) }; }
+function authConfig() {
+  return {
+    bootstrapAvailable: rows('SELECT id FROM users LIMIT 1').length === 0,
+    registrationAvailable: false,
+    adminPinConfigured: hasAdminPin(),
+    googleLoginAvailable: Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
+    demoLoginAvailable: true,
+    demoUsers: rows('SELECT name, role FROM users ORDER BY CASE role WHEN \'admin\' THEN 0 ELSE 1 END, created_at, name').map(user => ({ name: user.name, role: user.role }))
+  };
+}
 function pinDigest(pin, salt) { return crypto.scryptSync(String(pin), salt, 64, { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 }).toString('hex'); }
 function verifyAdminPin(pin) {
   const setting = rows("SELECT value FROM app_settings WHERE key='admin_pin_salt'")[0];
@@ -143,7 +152,21 @@ async function handleAuth(req, res, url) {
   const p = url.pathname;
   if (req.method === 'GET' && p === '/api/auth/config') return json(res, 200, authConfig());
   if (req.method === 'GET' && p === '/api/auth/me') return json(res, 200, { user: getCurrentUser(req) });
-  if (req.method === 'POST' && ['/api/auth/register', '/api/auth/login', '/api/auth/logout'].includes(p) && !localOriginAllowed(req, url)) return authFailure(req, res, 'This request origin is not allowed.', 403);
+  if (req.method === 'POST' && ['/api/auth/register', '/api/auth/login', '/api/auth/demo-login', '/api/auth/logout'].includes(p) && !localOriginAllowed(req, url)) return authFailure(req, res, 'This request origin is not allowed.', 403);
+  if (req.method === 'POST' && p === '/api/auth/demo-login') {
+    if (loginRateLimited(req)) return authFailure(req, res, 'Too many sign-in attempts. Wait 15 minutes, then try again.', 429);
+    let body; try { body = JSON.parse((await readBody(req, 16384)).toString('utf8')); } catch { return authFailure(req, res, 'Choose a role and enter the suggested user name.', 400); }
+    const role = body.role === 'admin' ? 'admin' : body.role === 'employee' ? 'employee' : '';
+    const username = String(body.username || '').trim().slice(0, 100);
+    if (!role || !username) return authFailure(req, res, 'Choose a role and enter the suggested user name.', 400);
+    const user = rows('SELECT * FROM users WHERE role=? AND lower(name)=lower(?) ORDER BY created_at LIMIT 1', [role, username])[0];
+    if (!user) {
+      recordLoginFailure(req, false);
+      return authFailure(req, res, `That ${role} name is not in the suggestions. Select a name from the list and try again.`, 401);
+    }
+    recordLoginFailure(req, true); createSession(user.id, req, res);
+    return json(res, 200, { user: publicUser(user), demo: true });
+  }
   if (req.method === 'POST' && p === '/api/auth/admin-pin/setup') {
     if (!localOriginAllowed(req, url)) return authFailure(req, res, 'This request origin is not allowed.', 403);
     if (loginRateLimited(req)) return authFailure(req, res, 'Too many sign-in attempts. Wait 15 minutes, then try again.', 429);
@@ -330,6 +353,11 @@ function initDatabase() {
     db.run('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, password_salt TEXT, password_hash TEXT, google_sub TEXT UNIQUE, created_at TEXT NOT NULL, role TEXT NOT NULL DEFAULT \'employee\')');
     const userColumns = rows('PRAGMA table_info(users)').map(row => row.name); if (!userColumns.includes('role')) db.run("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'employee'");
     db.run('CREATE TABLE IF NOT EXISTS app_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+    if (rows('SELECT id FROM users LIMIT 1').length === 0) {
+      const now = new Date().toISOString();
+      db.run('INSERT INTO users (id,email,name,password_salt,password_hash,google_sub,created_at,role) VALUES (?,?,?,?,?,?,?,?)', [crypto.randomUUID(), 'admin@ledgerlens.demo', 'Admin', null, null, null, now, 'admin']);
+      db.run('INSERT INTO users (id,email,name,password_salt,password_hash,google_sub,created_at,role) VALUES (?,?,?,?,?,?,?,?)', [crypto.randomUUID(), 'employee@ledgerlens.demo', 'Employee', null, null, null, now, 'employee']);
+    }
     if (rows("SELECT id FROM users WHERE role='admin' LIMIT 1").length === 0) db.run("UPDATE users SET role='admin' WHERE id=(SELECT id FROM users ORDER BY created_at ASC, rowid ASC LIMIT 1)");
     const admin = rows("SELECT id FROM users WHERE role='admin' ORDER BY created_at ASC LIMIT 1")[0]; if (admin) db.run("UPDATE documents SET owner_id=? WHERE owner_id IS NULL OR owner_id=''", [admin.id]);
     db.run('CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, created_at TEXT NOT NULL, expires_at TEXT NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE)'); db.run('CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(expires_at)');
@@ -471,8 +499,6 @@ async function handle(req, res) {
     const nextRole = body.role; if (!['admin', 'employee'].includes(nextRole)) return json(res, 400, { error: 'Role must be Admin or Employee.' });
     const target = rows('SELECT id,role,password_hash FROM users WHERE id=? LIMIT 1', [targetId])[0]; if (!target) return json(res, 404, { error: 'Account not found.' });
     if (target.role === nextRole) return json(res, 200, { ok: true, role: nextRole });
-    if (nextRole === 'admin' && !target.password_hash) return json(res, 409, { error: 'This account needs a local password before it can become an Admin.' });
-    if (nextRole === 'admin' && !hasAdminPin()) return json(res, 409, { error: 'Configure the Admin PIN before adding another Admin.' });
     if (target.role === 'admin' && rows("SELECT id FROM users WHERE role='admin'").length <= 1) return json(res, 409, { error: 'The workspace must keep at least one Admin.' });
     db.run('UPDATE users SET role=? WHERE id=?', [nextRole, targetId]); db.run('DELETE FROM sessions WHERE user_id=?', [targetId]); persistDatabase();
     return json(res, 200, { ok: true, role: nextRole, message: 'Role updated. The user must sign in again.' });
@@ -480,12 +506,11 @@ async function handle(req, res) {
   if (req.method === 'POST' && p === '/api/admin/users') {
     if (req.authUser.role !== 'admin') return json(res, 403, { error: 'Admin access is required.' });
     let body; try { body = JSON.parse((await readBody(req, 16384)).toString('utf8')); } catch { return json(res, 400, { error: 'Enter the employee details.' }); }
-    const email = normalizeEmail(body.email); const name = String(body.name || '').trim().slice(0, 100); const password = String(body.password || '');
+    const email = normalizeEmail(body.email); const name = String(body.name || '').trim().slice(0, 100);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !name) return json(res, 400, { error: 'Enter the employee name and a valid email address.' });
-    if (password.length < 12 || Buffer.byteLength(password, 'utf8') > 128) return json(res, 400, { error: 'Choose a password between 12 and 128 characters.' });
     if (findUserByEmail(email)) return json(res, 409, { error: 'An account with this email already exists.' });
-    const id = crypto.randomUUID(); const salt = crypto.randomBytes(16).toString('hex'); const hash = passwordDigest(password, salt);
-    db.run('INSERT INTO users (id,email,name,password_salt,password_hash,google_sub,created_at,role) VALUES (?,?,?,?,?,?,?,?)', [id, email, name, salt, hash, null, new Date().toISOString(), 'employee']); persistDatabase();
+    const id = crypto.randomUUID();
+    db.run('INSERT INTO users (id,email,name,password_salt,password_hash,google_sub,created_at,role) VALUES (?,?,?,?,?,?,?,?)', [id, email, name, null, null, null, new Date().toISOString(), 'employee']); persistDatabase();
     return json(res, 201, { user: { id, email, name, role: 'employee' } });
   }
   if (req.method === 'GET' && p === '/api/metrics') return json(res, 200, stats(req.authUser));
