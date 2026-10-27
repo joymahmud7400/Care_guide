@@ -1,0 +1,258 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 8 0 R /MediaBox [ 0 0 612 792 ] /Parent 7 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/PageMode /UseNone /Pages 7 0 R /Type /Catalog
+>>
+endobj
+6 0 obj
+<<
+/Author (LedgerLens OCR Demo) /CreationDate (D:20261027102744+06'00') /Creator (anonymous) /Keywords () /ModDate (D:20261027102744+06'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Demo Invoice - Sample Only) /Trapped /False
+>>
+endobj
+7 0 obj
+<<
+/Count 1 /Kids [ 4 0 R ] /Type /Pages
+>>
+endobj
+8 0 obj
+<<
+/Length 4834
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.086275 .454902 .317647 rg
+n
+57 698 m
+79 698 l
+83.9752 698 88 702.0248 88 707 c
+88 729 l
+88 733.9752 83.9752 738 79 738 c
+57 738 l
+52.0248 738 48 733.9752 48 729 c
+48 707 l
+48 702.0248 52.0248 698 57 698 c
+h
+f*
+1 1 1 RG
+1.8 w
+n 59 729 m 72 729 l S
+n 59 723 m 72 723 l S
+n 59 717 m 68 717 l S
+.094118 .156863 .12549 rg
+BT /F2 18 Tf 21.6 TL ET
+BT 1 0 0 1 100 723 Tm (NORTHSTAR DEMO SUPPLIES) Tj T* ET
+.45098 .501961 .470588 rg
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 100 708 Tm (123 Sample Avenue  |  Test City  |  DEMO BUSINESS) Tj T* ET
+.086275 .454902 .317647 rg
+BT /F2 27 Tf 32.4 TL ET
+BT 1 0 0 1 452.976 726 Tm (INVOICE) Tj T* ET
+1 .956863 .870588 rg
+n
+53 660 m
+559 660 l
+561.764 660 564 662.236 564 665 c
+564 680 l
+564 682.764 561.764 685 559 685 c
+53 685 l
+50.236 685 48 682.764 48 680 c
+48 665 l
+48 662.236 50.236 660 53 660 c
+h
+f*
+.541176 .380392 .12549 rg
+BT /F2 9 Tf 10.8 TL ET
+BT 1 0 0 1 170.982 669 Tm (SAMPLE ONLY  |  FICTIONAL DATA FOR SOFTWARE TESTING) Tj T* ET
+.937255 .968627 .945098 rg
+n
+55 540 m
+291 540 l
+294.8696 540 298 543.1304 298 547 c
+298 627 l
+298 630.8696 294.8696 634 291 634 c
+55 634 l
+51.1304 634 48 630.8696 48 627 c
+48 547 l
+48 543.1304 51.1304 540 55 540 c
+h
+f*
+.45098 .501961 .470588 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 61 615 Tm (BILL TO) Tj T* ET
+.094118 .156863 .12549 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 61 596 Tm (Acme Demo Studio) Tj T* ET
+.45098 .501961 .470588 rg
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 61 578 Tm (456 Example Road) Tj T* ET
+BT 1 0 0 1 61 564 Tm (Demo District, Test City) Tj T* ET
+.937255 .968627 .945098 rg
+n
+321 540 m
+557 540 l
+560.8696 540 564 543.1304 564 547 c
+564 627 l
+564 630.8696 560.8696 634 557 634 c
+321 634 l
+317.1304 634 314 630.8696 314 627 c
+314 547 l
+314 543.1304 317.1304 540 321 540 c
+h
+f*
+.45098 .501961 .470588 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 327 615 Tm (INVOICE DETAILS) Tj T* ET
+.094118 .156863 .12549 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 327 596 Tm (DEMO-2026-001) Tj T* ET
+.45098 .501961 .470588 rg
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 327 578 Tm (Invoice Date: 2026-10-27) Tj T* ET
+BT 1 0 0 1 327 564 Tm (Due Date: 2026-11-26) Tj T* ET
+.094118 .156863 .12549 rg
+n
+53 473 m
+559 473 l
+561.764 473 564 475.236 564 478 c
+564 502 l
+564 504.764 561.764 507 559 507 c
+53 507 l
+50.236 507 48 504.764 48 502 c
+48 478 l
+48 475.236 50.236 473 53 473 c
+h
+f*
+1 1 1 rg
+BT /F2 8 Tf 9.6 TL ET
+BT 1 0 0 1 61 485 Tm (DESCRIPTION) Tj T* ET
+BT 1 0 0 1 373.552 485 Tm (QTY) Tj T* ET
+BT 1 0 0 1 495.448 485 Tm (LINE AMOUNT) Tj T* ET
+.980392 .988235 .980392 rg
+n 48 439 516 34 re f*
+.890196 .917647 .898039 RG
+n 48 439 m 564 439 l S
+.094118 .156863 .12549 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 61 452 Tm (Sample office kits) Tj T* ET
+BT 1 0 0 1 384.44 452 Tm (1) Tj T* ET
+BT 1 0 0 1 514.86 452 Tm ($750.00) Tj T* ET
+.890196 .917647 .898039 RG
+n 48 405 m 564 405 l S
+.094118 .156863 .12549 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 61 418 Tm (Shipping and handling) Tj T* ET
+BT 1 0 0 1 384.44 418 Tm (2) Tj T* ET
+BT 1 0 0 1 514.86 418 Tm ($500.00) Tj T* ET
+.890196 .917647 .898039 RG
+n 340 409 m 564 409 l S
+.45098 .501961 .470588 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 355 390 Tm (Subtotal) Tj T* ET
+.094118 .156863 .12549 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 506.52 390 Tm ($1,250.00) Tj T* ET
+.45098 .501961 .470588 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 355 371 Tm (Tax \(10%\)) Tj T* ET
+.094118 .156863 .12549 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 514.86 371 Tm ($125.00) Tj T* ET
+.937255 .968627 .945098 rg
+n
+345 336 m
+559 336 l
+561.764 336 564 338.236 564 341 c
+564 360 l
+564 362.764 561.764 365 559 365 c
+345 365 l
+342.236 365 340 362.764 340 360 c
+340 341 l
+340 338.236 342.236 336 345 336 c
+h
+f*
+.086275 .454902 .317647 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 353 346 Tm (Total \(USD\)) Tj T* ET
+BT 1 0 0 1 502.072 346 Tm ($1,375.00) Tj T* ET
+.890196 .917647 .898039 RG
+n 48 220 m 564 220 l S
+.45098 .501961 .470588 rg
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 48 202 Tm (Payment terms: Net 30. This sample has no real payment instructions.) Tj T* ET
+BT 1 0 0 1 48 188 Tm (Thank you for testing LedgerLens document extraction.) Tj T* ET
+.980392 .988235 .980392 rg
+n
+53 215 m
+559 215 l
+561.764 215 564 217.236 564 220 c
+564 260 l
+564 262.764 561.764 265 559 265 c
+53 265 l
+50.236 265 48 262.764 48 260 c
+48 220 l
+48 217.236 50.236 215 53 215 c
+h
+f*
+.45098 .501961 .470588 rg
+BT /F1 7 Tf 8.4 TL ET
+BT 1 0 0 1 60 249 Tm (Supplier: Northstar Demo Supplies) Tj T* ET
+BT 1 0 0 1 60 236 Tm (Customer: Acme Demo Studio) Tj T* ET
+BT /F1 7 Tf 8.4 TL ET
+BT 1 0 0 1 60 223 Tm (Invoice Number: DEMO-2026-001  |  Invoice Date: 2026-10-27  |  Subtotal: $1,250.00  |  Tax: $125.00  |  Total: $1,375.00  |  Currency: USD) Tj T* ET
+.643137 .682353 .654902 rg
+BT /F1 7 Tf 8.4 TL ET
+BT 1 0 0 1 193.9825 146 Tm (DEMO INVOICE - FICTIONAL NAMES, ADDRESSES, AND AMOUNTS) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000514 00000 n 
+0000000582 00000 n 
+0000000871 00000 n 
+0000000930 00000 n 
+trailer
+<<
+/ID 
+[<6bbd3b6140c4e0c09a3c6dc46bb3b082><6bbd3b6140c4e0c09a3c6dc46bb3b082>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 6 0 R
+/Root 5 0 R
+/Size 9
+>>
+startxref
+5815
+%%EOF

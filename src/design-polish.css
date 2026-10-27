@@ -1,0 +1,18 @@
+.portfolio-header{position:sticky;top:0;z-index:30;width:100%;background:#f7f7f2eF;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:box-shadow .25s ease}
+.portfolio-nav a{position:relative;padding:8px 0}
+.portfolio-nav a:after{position:absolute;right:0;bottom:1px;left:0;height:1px;background:#3b8065;content:'';transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.7,.25,1)}
+.portfolio-nav a:hover:after,.portfolio-nav a:focus-visible:after{transform:scaleX(1)}
+.portfolio-page section[id]{scroll-margin-top:104px}
+.portfolio-hero{isolation:isolate;background:radial-gradient(ellipse at 76% 42%,#e6eee7 0,transparent 35%),var(--paper)}
+.portfolio-hero:before{position:absolute;z-index:-1;top:12%;right:7%;width:min(38vw,480px);aspect-ratio:1;border:1px solid #dbe6dc;border-radius:50%;background:radial-gradient(circle,#dce9df75 0%,#e8eee844 43%,transparent 70%);content:'';filter:blur(1px);animation:hero-halo 8s ease-in-out infinite alternate}
+@keyframes hero-halo{from{transform:scale(.96);opacity:.6}to{transform:scale(1.04);opacity:1}}
+.hero-portrait-wrap{z-index:1}
+.about-photo-orbit{animation:orbit-turn 68s linear infinite}
+.project-card{transition:box-shadow .4s ease,transform .4s cubic-bezier(.2,.7,.25,1)}
+.project-card.is-visible:hover{box-shadow:0 25px 55px #193c3018;transform:translateY(-4px)}
+.portfolio-page :focus-visible{outline:2px solid #3d9071;outline-offset:4px}
+.button-primary,.button-light,.choose-video{position:relative;overflow:hidden}
+.button-primary:after,.button-light:after,.choose-video:after{position:absolute;top:0;bottom:0;left:-70%;width:45%;background:linear-gradient(100deg,transparent,#ffffff42,transparent);content:'';transform:skewX(-18deg);transition:left .65s ease}
+.button-primary:hover:after,.button-light:hover:after,.choose-video:hover:after{left:130%}
+@media(max-width:760px){.portfolio-hero:before{top:41%;right:-13%;width:82vw}.portfolio-page section[id]{scroll-margin-top:82px}}
+@media(prefers-reduced-motion:reduce){.portfolio-header,.portfolio-nav a:after,.portfolio-page *, .portfolio-page *:before,.portfolio-page *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.portfolio-page [data-reveal],.portfolio-page [data-reveal].is-visible{opacity:1;filter:none;transform:none;clip-path:none}}

@@ -1,0 +1,6 @@
+.extension-preview{width:100%;height:180px;margin:0 0 18px;overflow:hidden;border:1px solid #e3eae3;background:#f4f7f3}
+.wide-preview{display:grid;place-items:center;background:#f2f5f2}
+.wide-preview img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.portrait-preview{height:180px;display:flex;justify-content:center;align-items:flex-end;background:radial-gradient(ellipse at 50% 85%,#d9f1f1 0,#edf7f5 56%,#f8fbf8 100%)}
+.portrait-preview img{display:block;height:100%;width:auto;max-width:100%;object-fit:contain;object-position:center top;filter:drop-shadow(0 4px 8px #1d59601a)}
+.extension-card .extension-card-top{margin-bottom:15px}

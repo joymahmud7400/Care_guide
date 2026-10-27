@@ -1,0 +1,223 @@
+[
+  {
+    "documentId": "demo-invoice.pdf",
+    "fileType": "pdf",
+    "expected": {
+      "invoiceNumber": "DEMO-2026-001",
+      "invoiceDate": "2026-10-27",
+      "supplierName": "Northstar Demo Supplies",
+      "customerName": "Acme Demo Studio",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        {
+          "description": "Sample office kits",
+          "quantity": 1,
+          "amount": 750
+        },
+        {
+          "description": "Shipping and handling",
+          "quantity": 2,
+          "amount": 500
+        }
+      ]
+    },
+    "extracted": {
+      "invoiceNumber": "DEMO-2026-001",
+      "invoiceDate": "2026-10-27",
+      "supplierName": "Northstar Demo Supplies",
+      "customerName": "Acme Demo Studio",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        {
+          "description": "Sample office kits",
+          "quantity": 1,
+          "amount": 750
+        },
+        {
+          "description": "Shipping and handling",
+          "quantity": 2,
+          "amount": 500
+        }
+      ]
+    },
+    "processingStatus": "completed",
+    "processingMs": 108
+  },
+  {
+    "documentId": "scanned-invoice.pdf",
+    "fileType": "pdf",
+    "expected": {
+      "invoiceNumber": "SCAN-2026",
+      "invoiceDate": "2026-10-20",
+      "supplierName": "Riverbend Paper Co.",
+      "customerName": "Bluebird Studio",
+      "subtotal": 100,
+      "tax": 10,
+      "total": 110,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "extracted": {
+      "invoiceNumber": "SCAN-2026",
+      "invoiceDate": "2026-10-20",
+      "supplierName": "Riverbend Paper Co.",
+      "customerName": "Bluebird Studio",
+      "subtotal": 100,
+      "tax": 10,
+      "total": 110,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "processingStatus": "completed",
+    "processingMs": 962
+  },
+  {
+    "documentId": "multipage-mixed-invoice.pdf",
+    "fileType": "pdf",
+    "expected": {
+      "invoiceNumber": "PAGE-2026-01",
+      "invoiceDate": "2026-10-21",
+      "supplierName": "Cedar Lane Services",
+      "customerName": "Harbor Demo Works",
+      "subtotal": 200,
+      "tax": 20,
+      "total": 220,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "extracted": {
+      "invoiceNumber": "PAGE-2026-01",
+      "invoiceDate": "2026-10-21",
+      "supplierName": "Cedar Lane Services",
+      "customerName": "Harbor Demo Works",
+      "subtotal": 200,
+      "tax": 20,
+      "total": 220,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "processingStatus": "completed",
+    "processingMs": 706
+  },
+  {
+    "documentId": "invoice.xlsx",
+    "fileType": "xlsx",
+    "expected": {
+      "invoiceNumber": "XLSX-2026-04",
+      "invoiceDate": "2026-10-24",
+      "supplierName": "Juniper Office Mart",
+      "customerName": "Cobalt Design",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        {
+          "description": "Sample office kits",
+          "quantity": 1,
+          "amount": 750
+        },
+        {
+          "description": "Shipping and handling",
+          "quantity": 2,
+          "amount": 500
+        }
+      ]
+    },
+    "extracted": {
+      "invoiceNumber": "XLSX-2026-04",
+      "invoiceDate": "2026-10-24",
+      "supplierName": "Juniper Office Mart",
+      "customerName": "Cobalt Design",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        {
+          "description": "Sample office kits",
+          "quantity": 1,
+          "unitPrice": 750,
+          "amount": 750
+        },
+        {
+          "description": "Shipping and handling",
+          "quantity": 2,
+          "unitPrice": 250,
+          "amount": 500
+        }
+      ]
+    },
+    "processingStatus": "completed",
+    "processingMs": 13
+  },
+  {
+    "documentId": "invoice.csv",
+    "fileType": "csv",
+    "expected": {
+      "invoiceNumber": "CSV-2026-09",
+      "invoiceDate": "2026-10-25",
+      "supplierName": "Fieldstone Kitchen Ltd",
+      "customerName": "Orbit Design",
+      "subtotal": 450,
+      "tax": 45,
+      "total": 495,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "extracted": {
+      "invoiceNumber": "CSV-2026-09",
+      "invoiceDate": "2026-10-25",
+      "supplierName": "Fieldstone Kitchen Ltd",
+      "customerName": "Orbit Design",
+      "subtotal": 450,
+      "tax": 45,
+      "total": 495,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "processingStatus": "completed",
+    "processingMs": 3
+  },
+  {
+    "documentId": "invoice.png",
+    "fileType": "png",
+    "expected": {
+      "invoiceNumber": "IMG-2026-77",
+      "invoiceDate": "2026-10-12",
+      "supplierName": "OCR Test Supplies",
+      "customerName": "Pixel Studio",
+      "subtotal": 200,
+      "tax": 20,
+      "total": 220,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "extracted": {
+      "invoiceNumber": "IMG-2026-77",
+      "invoiceDate": "2026-10-12",
+      "supplierName": "OCR Test Supplies",
+      "customerName": "Pixel Studio",
+      "subtotal": 200,
+      "tax": 20,
+      "total": 220,
+      "currency": "USD",
+      "lineItems": []
+    },
+    "processingStatus": "completed",
+    "processingMs": 738
+  },
+  {
+    "documentId": "corrupted.pdf",
+    "fileType": "pdf",
+    "extracted": {},
+    "processingStatus": "failed",
+    "processingMs": 3
+  }
+]

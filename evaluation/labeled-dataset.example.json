@@ -1,0 +1,33 @@
+[
+  {
+    "documentId": "replace-with-your-document-id",
+    "expected": {
+      "invoiceNumber": "INV-1001",
+      "invoiceDate": "2026-10-01",
+      "supplierName": "Example Supplier Ltd",
+      "customerName": "Example Customer",
+      "subtotal": 100,
+      "tax": 10,
+      "total": 110,
+      "currency": "USD",
+      "lineItems": [
+        { "description": "Example item", "quantity": 1, "amount": 100 }
+      ]
+    },
+    "extracted": {
+      "invoiceNumber": "INV-1001",
+      "invoiceDate": "2026-10-01",
+      "supplierName": "Example Supplier Ltd",
+      "customerName": "Example Customer",
+      "subtotal": 100,
+      "tax": 10,
+      "total": 110,
+      "currency": "USD",
+      "lineItems": [
+        { "description": "Example item", "quantity": 1, "amount": 100 }
+      ]
+    },
+    "processingStatus": "completed",
+    "processingMs": 1250
+  }
+]

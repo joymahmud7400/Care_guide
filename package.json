@@ -1,0 +1,32 @@
+{
+  "name": "ledgerlens-ocr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local invoice intelligence app with protected accounts, password login, and optional Google sign-in",
+  "scripts": {
+    "start": "vite build && node api.js",
+    "dev": "concurrently -k -n API,WEB -c green,cyan \"node api.js\" \"vite --host 127.0.0.1\"",
+    "build": "vite build",
+    "test": "node --test",
+    "evaluate": "node scripts/evaluate.js",
+    "benchmark": "node scripts/run-synthetic-benchmark.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "0.1.68",
+    "google-auth-library": "^11.3.1",
+    "pdfjs-dist": "4.10.38",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sql.js": "1.13.0",
+    "tesseract.js": "5.1.1",
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "concurrently": "9.1.2",
+    "vite": "5.4.14"
+  }
+}

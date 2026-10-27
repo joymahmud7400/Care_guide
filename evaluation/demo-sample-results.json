@@ -1,0 +1,35 @@
+[
+  {
+    "documentId": "demo-invoice.pdf",
+    "expected": {
+      "invoiceNumber": "DEMO-2026-001",
+      "invoiceDate": "2026-10-27",
+      "supplierName": "Northstar Demo Supplies",
+      "customerName": "Acme Demo Studio",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        { "description": "Sample office kits", "quantity": 1, "amount": 750 },
+        { "description": "Shipping and handling", "quantity": 2, "amount": 500 }
+      ]
+    },
+    "extracted": {
+      "invoiceNumber": "DEMO-2026-001",
+      "invoiceDate": "2026-10-27",
+      "supplierName": "Northstar Demo Supplies",
+      "customerName": "Acme Demo Studio",
+      "subtotal": 1250,
+      "tax": 125,
+      "total": 1375,
+      "currency": "USD",
+      "lineItems": [
+        { "description": "Sample office kits", "quantity": 1, "amount": 750 },
+        { "description": "Shipping and handling", "quantity": 2, "amount": 500 }
+      ]
+    },
+    "processingStatus": "completed",
+    "processingMs": 167
+  }
+]
