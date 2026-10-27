@@ -18,7 +18,7 @@ export default function App() {
   const [selectedIds, setSelectedIds] = useState([]); const [comparison, setComparison] = useState(null); const [comparing, setComparing] = useState(false);
   const [teamUsers, setTeamUsers] = useState([]); const [showTeam, setShowTeam] = useState(false); const [employeeName, setEmployeeName] = useState(''); const [employeeEmail, setEmployeeEmail] = useState('');
   const [roleChanges, setRoleChanges] = useState({});
-  const [busy, setBusy] = useState(false); const [savingReview, setSavingReview] = useState(false); const [toast, setToast] = useState(''); const [dragging, setDragging] = useState(false);
+  const [busy, setBusy] = useState(false); const [savingReview, setSavingReview] = useState(false); const [deletingDocument, setDeletingDocument] = useState(false); const [toast, setToast] = useState(''); const [dragging, setDragging] = useState(false);
   const fileInput = useRef(null); const toastTimer = useRef(null); const connectionWarning = useRef(false); const savingReviewRef = useRef(false);
   const notify = useCallback(message => { setToast(message); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToast(''), 3000); }, []);
   const refresh = useCallback(async () => {
@@ -87,6 +87,21 @@ export default function App() {
     finally { savingReviewRef.current = false; setSavingReview(false); }
   }
   async function retry() { if (!selectedId) return; try { await api(`/api/documents/${encodeURIComponent(selectedId)}/reprocess`, { method: 'POST' }); notify('Retry started.'); await refresh(); } catch (error) { notify(error.message); } }
+  async function deleteDocument() {
+    if (authUser?.role !== 'admin' || !selectedId || deletingDocument) return;
+    const documentName = detail?.name || 'this document';
+    if (!window.confirm(`Delete “${documentName}” and its uploaded file? This cannot be undone.`)) return;
+    setDeletingDocument(true);
+    try {
+      await api(`/api/documents/${encodeURIComponent(selectedId)}`, { method: 'DELETE' });
+      setSelectedIds(current => current.filter(id => id !== selectedId));
+      setSelectedId(null);
+      setDetail(null);
+      notify('Document and original file deleted.');
+      await refresh();
+    } catch (error) { notify(error.message); }
+    finally { setDeletingDocument(false); }
+  }
   function toggleSelected(id) { setSelectedIds(current => current.includes(id) ? current.filter(value => value !== id) : [...current, id]); setComparison(null); }
   async function compareSelected() { if (selectedIds.length < 2 || selectedIds.length > 10) { notify('Select 2 to 10 completed invoices to cross-check.'); return; } setComparing(true); try { setComparison(await api('/api/compare', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ documentIds: selectedIds }) })); } catch (error) { notify(error.message); } finally { setComparing(false); } }
   async function addEmployee(event) { event.preventDefault(); try { await api('/api/admin/users', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: employeeName, email: employeeEmail }) }); setEmployeeName(''); setEmployeeEmail(''); notify('Employee added. Their name is now available on the sign-in screen.'); setAuthConfig(await api('/api/auth/config')); await refresh(); } catch (error) { notify(error.message); } }
@@ -129,7 +144,7 @@ export default function App() {
           <div className="source-text"><details><summary>View extracted text</summary><pre>{detail.extractedText||'No text extracted yet.'}</pre></details><details className="history-details"><summary>Processing history</summary>{(detail.history||[]).slice().reverse().map((entry,i)=><div className="history-item" key={i}><b>{entry.status}</b><span>{entry.message}</span><time>{escDate(entry.at)}</time></div>)}</details></div>
         </form></>}
     </aside>
-    {detail&&selectedId&&<div className="drawer-actions">{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<div className="review-action-buttons"><button type="submit" form="documentReviewForm" className="secondary" disabled={savingReview}>{savingReview?'Saving…':'Save review'}</button>{documentType==='invoice'&&<button type="submit" form="documentReviewForm" name="reviewAction" value="force-completed" className="primary" disabled={savingReview}>{savingReview?'Saving…':'Save & mark complete'}</button>}</div></div>}
+    {detail&&selectedId&&<div className="drawer-actions">{authUser.role==='admin'&&<button type="button" className="delete-document" onClick={deleteDocument} disabled={deletingDocument}>{deletingDocument?'Deleting…':'Delete document'}</button>}{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<div className="review-action-buttons"><button type="submit" form="documentReviewForm" className="secondary" disabled={savingReview||deletingDocument}>{savingReview?'Saving…':'Save review'}</button>{documentType==='invoice'&&<button type="submit" form="documentReviewForm" name="reviewAction" value="force-completed" className="primary" disabled={savingReview||deletingDocument}>{savingReview?'Saving…':'Save & mark complete'}</button>}</div></div>}
     <div className={`toast ${toast?'show':''}`}>{toast}</div>
   </div>;
 }

@@ -537,6 +537,19 @@ async function handle(req, res) {
   if (req.method === 'POST' && reprocess) { const doc = findDocumentForUser(reprocess[1], req.authUser); if (!doc) return json(res, 404, { error: 'Document not found.' }); doc.status = 'queued'; doc.updatedAt = new Date().toISOString(); doc.history.push({ at: doc.updatedAt, status: 'queued', message: 'Reprocessing requested.' }); saveDocument(doc); setImmediate(() => enqueueDocument(doc.id)); return json(res, 202, { status: 'queued' }); }
   const detail = p.match(/^\/api\/documents\/([\w-]+)$/);
   if (req.method === 'GET' && detail) { const doc = findDocumentForUser(detail[1], req.authUser); return doc ? json(res, 200, { document: { ...toClient(doc), history: doc.history, extractedText: doc.extractedText, fields: doc.fields, validationErrors: doc.validationErrors } }) : json(res, 404, { error: 'Document not found.' }); }
+  if (req.method === 'DELETE' && detail) {
+    if (req.authUser.role !== 'admin') return json(res, 403, { error: 'Only admins can delete documents.' });
+    const doc = findDocumentForUser(detail[1], req.authUser);
+    if (!doc) return json(res, 404, { error: 'Document not found.' });
+    if (doc.storedName) {
+      const filePath = path.resolve(UPLOAD_DIR, doc.storedName);
+      if (!filePath.startsWith(path.resolve(UPLOAD_DIR) + path.sep)) return json(res, 400, { error: 'Invalid stored document path.' });
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+    db.run('DELETE FROM documents WHERE id=?', [doc.id]);
+    persistDatabase();
+    return json(res, 200, { deleted: true, id: doc.id });
+  }
   if (req.method === 'PATCH' && detail) {
     const doc = findDocumentForUser(detail[1], req.authUser);
     if (!doc) return json(res, 404, { error: 'Document not found.' });
