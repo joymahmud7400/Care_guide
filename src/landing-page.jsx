@@ -145,7 +145,7 @@ export default function LandingPage() {
       <section className="overview-section" id="overview">
         <div className="section-label" data-reveal><span>05</span> SEE IT IN ACTION</div>
         <div className="overview-layout" data-reveal="right" style={{'--reveal-delay':'100ms'}}><div className="overview-copy"><h2>A quick look<br/>inside <em>LedgerLens.</em></h2><p>Watch my recorded LedgerLens walkthrough here, or choose another video from your device.</p><button className="choose-video" onClick={() => videoInput.current?.click()}>Choose a different video <Arrow diagonal /></button><input ref={videoInput} type="file" accept="video/mp4,video/webm,video/ogg" onChange={chooseVideo} hidden/>{videoName && <small className="video-filename">Walkthrough: {videoName}</small>}<span className="video-format-note">Project demo · MP4</span></div>
-          <div className="video-frame has-video"><video src={videoUrl} controls loop playsInline preload="metadata" aria-label="LedgerLens project overview video"/></div>
+          <div className="video-frame has-video"><video src={videoUrl} controls autoPlay muted loop playsInline preload="metadata" aria-label="LedgerLens project overview video"/></div>
         </div>
       </section>
 
