@@ -120,6 +120,12 @@ export default function LandingPage() {
           <div className="project-visual" aria-label="LedgerLens dashboard preview"><div className="mock-window"><div className="mock-top"><span className="mock-brand"><b>L</b> ledger<span>lens</span></span><span className="mock-dots"><i/><i/><i/></span></div><div className="mock-body"><div className="mock-side"><i className="side-active"/><i/><i/><i/><span/></div><div className="mock-main"><div className="mock-title-row"><div><small>OVERVIEW</small><b>Your documents, in focus.</b></div><span className="mock-upload">＋ Upload</span></div><div className="mock-stats"><div><small>TOTAL DOCUMENTS</small><b>24</b><i>↑ 8 this month</i></div><div><small>NEEDS REVIEW</small><b>03</b><i className="mock-warm">Check these invoices</i></div><div><small>PROCESSED</small><b>21</b><i>All caught up</i></div></div><div className="mock-table"><div className="mock-table-head"><span>DOCUMENT</span><span>SUPPLIER</span><span>AMOUNT</span><span>STATUS</span></div><div className="mock-row"><i className="mock-file">PDF</i><b>Invoice_1048.pdf</b><span>Northstar Supply</span><strong>$2,480.00</strong><em>Complete</em></div><div className="mock-row"><i className="mock-file">PDF</i><b>April_Invoice.pdf</b><span>Studio Forma</span><strong>$860.50</strong><em className="needs-review">Review</em></div><div className="mock-row"><i className="mock-file">XLS</i><b>Supplier_list.xlsx</b><span>Operations team</span><strong>—</strong><em>Processed</em></div></div></div></div><div className="mock-footer"><span><i/> PRIVATE LOCAL WORKSPACE</span><span>OCR · CHECK · REVIEW</span></div></div><div className="visual-sticker">WORK<br/>SMARTER<span>↗</span></div></div>
         </div>
         <div className="project-footnote"><span>DESIGNED TO SUPPORT HUMAN REVIEW</span><span>Details should be checked before accounting use.</span></div>
+        <div className="project-walkthrough" id="overview" data-reveal="wipe">
+          <div className="section-label"><span>02</span> PROJECT WALKTHROUGH</div>
+          <div className="overview-layout"><div className="overview-copy"><h2>See LedgerLens<br/><em>in action.</em></h2><p>Watch the recorded walkthrough to follow the invoice workflow, from upload and text extraction through review.</p><button className="choose-video" onClick={() => videoInput.current?.click()}>Choose a different video <Arrow diagonal /></button><input ref={videoInput} type="file" accept="video/mp4,video/webm,video/ogg" onChange={chooseVideo} hidden/>{videoName && <small className="video-filename">Walkthrough: {videoName}</small>}<span className="video-format-note">Project demo · loops automatically · muted autoplay</span></div>
+            <div className="video-frame has-video"><video src={videoUrl} controls autoPlay muted loop playsInline preload="metadata" aria-label="LedgerLens project overview video"/></div>
+          </div>
+        </div>
       </section>
 
       <section className="extensions-section" id="extensions">
@@ -142,14 +148,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="overview-section" id="overview">
-        <div className="section-label" data-reveal><span>05</span> SEE IT IN ACTION</div>
-        <div className="overview-layout" data-reveal="right" style={{'--reveal-delay':'100ms'}}><div className="overview-copy"><h2>A quick look<br/>inside <em>LedgerLens.</em></h2><p>Watch my recorded LedgerLens walkthrough here, or choose another video from your device.</p><button className="choose-video" onClick={() => videoInput.current?.click()}>Choose a different video <Arrow diagonal /></button><input ref={videoInput} type="file" accept="video/mp4,video/webm,video/ogg" onChange={chooseVideo} hidden/>{videoName && <small className="video-filename">Walkthrough: {videoName}</small>}<span className="video-format-note">Project demo · MP4</span></div>
-          <div className="video-frame has-video"><video src={videoUrl} controls autoPlay muted loop playsInline preload="metadata" aria-label="LedgerLens project overview video"/></div>
-        </div>
-      </section>
-
-      <section className="closing-section" data-reveal="closing"><div className="closing-mark">AM<span>.</span></div><div><div className="section-label"><span>06</span> THANKS FOR STOPPING BY</div><h2>Let’s make work<br/><em>work better.</em></h2></div><a className="button-light" href="mailto:joymahmud7400@gmail.com">Get in touch <Arrow diagonal /></a></section>
+      <section className="closing-section" data-reveal="closing"><div className="closing-mark">AM<span>.</span></div><div><div className="section-label"><span>05</span> THANKS FOR STOPPING BY</div><h2>Let’s make work<br/><em>work better.</em></h2></div><a className="button-light" href="mailto:joymahmud7400@gmail.com">Get in touch <Arrow diagonal /></a></section>
     </main>
     <footer className="portfolio-footer"><span>© {new Date().getFullYear()} Al Mahamud</span><span>BUILT WITH CURIOSITY &amp; PURPOSE</span><a href="/app">ENTER LEDGERLENS <Arrow diagonal /></a></footer>
   </div>;
