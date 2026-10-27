@@ -1,6 +1,15 @@
 # LedgerLens OCR
 
-An end-to-end local document intelligence app for uploading business documents, extracting invoice data, validating it, and reviewing uncertain results.
+An end-to-end document intelligence app for uploading business documents, extracting invoice data, validating it, and reviewing uncertain results.
+
+## View the live demo (no password or PIN)
+
+1. Open [LedgerLens on Render](https://care-guide.onrender.com).
+2. Choose **Admin** to see the whole shared workspace, or **Employee** to see that user's documents.
+3. Click a suggested **Admin** or **Employee** name in the quick-start panel; it fills the user field.
+4. Click **Continue**. No account creation, password, or PIN is needed for this demo.
+
+This is open demo access: anyone with the link can enter either role. Use fictional sample files only; do not upload private or real business documents. The free hosted service may sleep while idle, and demo data may reset when redeployed.
 
 ## Run it on Windows
 
@@ -26,7 +35,7 @@ If a field is blank or marked for review on another document, inspect the origin
 
 ## Included features
 
-- First launch opens a one-owner sign-in screen with local email/password authentication; optional Google OAuth login is available when configured. Workspace API data is protected by server sessions. See `AUTHENTICATION.md`.
+- The hosted demo offers passwordless Admin and Employee role selection with suggested names. Admins can review all workspace documents; Employees see documents assigned to their account. This sign-in is for demonstrations, not private production use.
 
 - React interface with multi-file upload for PDF, JPG, PNG, TIFF, XLSX, XLS, and CSV (25 MB per file by default).
 - Text extraction from digital PDFs; page-by-page Tesseract OCR for scanned or low-text PDF pages, including mixed PDFs; Tesseract OCR for images; all-sheet spreadsheet parsing; CSV parsing.
@@ -37,16 +46,15 @@ If a field is blank or marked for review on another document, inspect the origin
 - Cross-check 2 to 10 completed invoice documents side by side, including PDF-to-PDF and PDF-to-spreadsheet comparisons; missing values and conflicting header or line-item totals are flagged.
 - SQLite persistence in `data/ledgerlens.sqlite`; uploaded files in `uploads/`.
 - Keyword search without credentials. Optional semantic search and LLM-assisted extraction when configured with an OpenAI API key.
-- API routes: `GET /api/health`, `GET /api/auth/config`, `GET /api/auth/me`, `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/google` (when configured), `GET /api/metrics`, `GET /api/documents`, `POST /api/documents?filename=...`, `GET /api/documents/:id`, `GET /api/documents/:id/file`, `PATCH /api/documents/:id`, `POST /api/documents/:id/reprocess`, `GET /api/search?q=...`, and `POST /api/compare` with `{ "documentIds": ["id-1", "id-2"] }`. The compare endpoint accepts 2-10 completed invoice documents and reports matching, missing, or conflicting values. All document, search, upload, and review APIs require a signed-in session; `/api/health` remains public.
+- API routes: `GET /api/health`, `GET /api/auth/config`, `GET /api/auth/me`, `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/demo-login`, `POST /api/auth/logout`, `GET /api/auth/google` (when configured), `GET /api/metrics`, `GET /api/documents`, `POST /api/documents?filename=...`, `GET /api/documents/:id`, `GET /api/documents/:id/file`, `PATCH /api/documents/:id`, `POST /api/documents/:id/reprocess`, `GET /api/search?q=...`, and `POST /api/compare` with `{ "documentIds": ["id-1", "id-2"] }`. The compare endpoint accepts 2-10 completed invoice documents and reports matching, missing, or conflicting values. Document, search, upload, and review APIs require a session after entering through the demo sign-in; /api/health remains public. Demo roles do not verify a visitor's identity.
 - Architecture and data flow in `ARCHITECTURE.md`.
 - Fictional test invoice in `evaluation/samples/demo-invoice.pdf` and its observed extraction in `evaluation/demo-sample-results.json`.
 
-## Sign-in and Google login
+## Demo sign-in
 
-On first launch, create the one local owner account using your email and a password with at least 12 characters. Later visits use that email and password. Passwords are stored as salted scrypt hashes; there is no password reset or email verification yet.
+The hosted demo starts with suggested **Admin** and **Employee** users. Choose a role, use the matching suggested name, and continue. Admin can see documents across the shared workspace; Employee sees only documents assigned to that user. Admins may add employees by name and email from **Manage employees**; no password is needed in demo mode.
 
-Google sign-in is optional. To enable it, create a Google OAuth Web application client, set the authorized origin to `http://localhost:3000` and the redirect URI to `http://localhost:3000/api/auth/google/callback`, copy `.env.example` to `.env`, and enter the client ID and secret. Restart with `npm start`. Never commit `.env` or share the client secret. Full steps are in `AUTHENTICATION.md`.
-
+Because anyone with the public link can select either role, this mode is intended only for instructor or manager demonstrations using fictional data. It does not protect real invoices or verify a visitor's identity. Do not use the hosted demo for confidential documents or production accounting.
 ## Optional AI setup
 
 In PowerShell, set the key for the current session before starting the app:
@@ -67,6 +75,5 @@ Optionally set `$env:OPENAI_MODEL` and `$env:EMBEDDING_MODEL`. Never put secrets
 
 ## Current limits
 
-This local prototype has Admin and Employee roles. The first account becomes Admin and sets a PIN. Admins can create Employee accounts and view all invoices; Employees can access only documents they upload. Account roles and document ownership are enforced by the API. The API binds to `127.0.0.1` by default. Password reset, encrypted storage at rest, a hosted database, and a distributed job queue are not included; one local worker processes queued jobs. OpenAI extraction and semantic search require your API credentials. Review important invoice results before using them for accounting. Do not expose the local server to the public internet.
-
+This is a demonstration prototype. Invoice extraction can miss or misread fields, so review results before using them. The hosted Render service uses temporary local storage unless a persistent disk and database are configured; files and demo records can disappear after redeploys or restarts. The free instance can sleep while idle. OpenAI extraction and semantic search require API credentials. Do not upload real confidential invoices to the public demo.
 The local homepage (`http://localhost:3000/`) is Al Mahamud's portfolio landing page. Open the invoice application from its **Explore LedgerLens** link, or visit `http://localhost:3000/app` directly.
