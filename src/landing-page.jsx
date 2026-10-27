@@ -4,6 +4,7 @@ import aboutPortrait from './assets/about-portrait.png';
 import timeSyncScreenshot from './assets/extension-timesync.png';
 import tvbScreenshot from './assets/extension-tvb.png';
 import arrivalScreenshot from './assets/extension-arrival.png';
+import demonstrationVideo from '../Demonstrate.mp4';
 import './landing-page.css';
 import './portrait.css';
 import './about-portrait.css';
@@ -19,8 +20,8 @@ import './apps-section.css';
 function Arrow({ diagonal = false }) { return <svg aria-hidden="true" viewBox="0 0 20 20" className={diagonal ? 'arrow-diagonal' : ''}><path d="M3.5 10h12M10 4.5l5.5 5.5-5.5 5.5" /></svg>; }
 
 export default function LandingPage() {
-  const [videoUrl, setVideoUrl] = useState('');
-  const [videoName, setVideoName] = useState('');
+  const [videoUrl, setVideoUrl] = useState(demonstrationVideo);
+  const [videoName, setVideoName] = useState('Demonstrate.mp4');
   const [activeWorkflow, setActiveWorkflow] = useState(0);
   const videoInput = useRef(null);
   const workflowSteps = [
@@ -28,7 +29,7 @@ export default function LandingPage() {
     { label: 'Extract', detail: 'OCR reads the page and organizes key fields.' },
     { label: 'Review', detail: 'Check values, fix uncertain fields, and compare invoices.' },
   ];
-  useEffect(() => () => { if (videoUrl) URL.revokeObjectURL(videoUrl); }, [videoUrl]);
+  useEffect(() => () => { if (videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl); }, [videoUrl]);
   useEffect(() => {
     const targets = [...document.querySelectorAll('[data-reveal]')];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
@@ -62,7 +63,7 @@ export default function LandingPage() {
   function chooseVideo(event) {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (videoUrl) URL.revokeObjectURL(videoUrl);
+    if (videoUrl.startsWith('blob:')) URL.revokeObjectURL(videoUrl);
     setVideoUrl(URL.createObjectURL(file));
     setVideoName(file.name);
   }
@@ -143,8 +144,8 @@ export default function LandingPage() {
 
       <section className="overview-section" id="overview">
         <div className="section-label" data-reveal><span>05</span> SEE IT IN ACTION</div>
-        <div className="overview-layout" data-reveal="right" style={{'--reveal-delay':'100ms'}}><div className="overview-copy"><h2>A quick look<br/>inside <em>LedgerLens.</em></h2><p>Play a walkthrough here. If you have a screen recording, choose an MP4 or WebM file and it will play in this preview.</p><button className="choose-video" onClick={() => videoInput.current?.click()}>{videoUrl ? 'Choose a different video' : 'Choose project overview video'} <Arrow diagonal /></button><input ref={videoInput} type="file" accept="video/mp4,video/webm,video/ogg" onChange={chooseVideo} hidden/>{videoName && <small className="video-filename">Ready to play: {videoName}</small>}<span className="video-format-note">MP4 or WebM · Plays in this browser only</span></div>
-          <div className={`video-frame ${videoUrl ? 'has-video' : ''}`}>{videoUrl ? <video src={videoUrl} controls autoPlay playsInline aria-label="LedgerLens project overview video"/> : <><div className="video-art"><div className="video-grid"/><div className="video-spotlight"><div className="video-brand"><b>L</b> ledger<span>lens</span></div><span className="video-art-kicker">AI-ASSISTED INVOICE WORKFLOW</span><strong>See the signal<br/>in every invoice.</strong><div className="video-art-chips"><span>UPLOAD</span><i>→</i><span>EXTRACT</span><i>→</i><span>REVIEW</span></div></div><button className="video-play-button" onClick={() => videoInput.current?.click()} aria-label="Choose a project overview video"><span>▶</span></button><div className="video-controls-hint"><span>PROJECT OVERVIEW</span><span>ADD VIDEO TO PLAY <i>↗</i></span></div></div></>}</div>
+        <div className="overview-layout" data-reveal="right" style={{'--reveal-delay':'100ms'}}><div className="overview-copy"><h2>A quick look<br/>inside <em>LedgerLens.</em></h2><p>Watch my recorded LedgerLens walkthrough here, or choose another video from your device.</p><button className="choose-video" onClick={() => videoInput.current?.click()}>Choose a different video <Arrow diagonal /></button><input ref={videoInput} type="file" accept="video/mp4,video/webm,video/ogg" onChange={chooseVideo} hidden/>{videoName && <small className="video-filename">Walkthrough: {videoName}</small>}<span className="video-format-note">Project demo · MP4</span></div>
+          <div className="video-frame has-video"><video src={videoUrl} controls loop playsInline preload="metadata" aria-label="LedgerLens project overview video"/></div>
         </div>
       </section>
 

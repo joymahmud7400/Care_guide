@@ -482,6 +482,36 @@ function compareInvoiceDocuments(docs) {
 
 function serveStatic(res, pathname) { const name = pathname === '/' || pathname === '/app' || pathname === '/app/' ? 'index.html' : decodeURIComponent(pathname.slice(1)); const allowed = PUBLIC_FILES.has(name) || /^assets\/[A-Za-z0-9._-]+\.(?:js|css|svg|png|jpe?g|webp|mp4|webm)$/.test(name); if (!allowed) return json(res, 404, { error: 'Not found.' }); const base = fs.existsSync(path.join(DIST_DIR, 'index.html')) ? DIST_DIR : ROOT; const file = path.resolve(base, name); if (!file.startsWith(base + path.sep)) return json(res, 403, { error: 'Forbidden.' }); fs.readFile(file, (err, content) => { if (err) return json(res, 404, { error: 'Not found.' }); const type = name.endsWith('.html') ? 'text/html; charset=utf-8' : name.endsWith('.css') ? 'text/css; charset=utf-8' : name.endsWith('.svg') ? 'image/svg+xml' : /\.png$/i.test(name) ? 'image/png' : /\.jpe?g$/i.test(name) ? 'image/jpeg' : /\.webp$/i.test(name) ? 'image/webp' : /\.mp4$/i.test(name) ? 'video/mp4' : /\.webm$/i.test(name) ? 'video/webm' : 'text/javascript; charset=utf-8'; res.writeHead(200, { 'content-type': type, 'x-content-type-options': 'nosniff', 'cache-control': 'no-cache' }); res.end(content); }); }
 
+function serveStaticVideo(req, res, pathname) {
+  const name = decodeURIComponent(pathname.slice(1));
+  if (!/^assets\/[A-Za-z0-9._-]+\.mp4$/i.test(name)) return json(res, 404, { error: 'Not found.' });
+  const base = fs.existsSync(path.join(DIST_DIR, 'index.html')) ? DIST_DIR : ROOT;
+  const file = path.resolve(base, name);
+  if (!file.startsWith(base + path.sep)) return json(res, 403, { error: 'Forbidden.' });
+  fs.stat(file, (err, stat) => {
+    if (err || !stat.isFile()) return json(res, 404, { error: 'Not found.' });
+    const headers = { 'content-type': 'video/mp4', 'x-content-type-options': 'nosniff', 'cache-control': 'no-cache', 'accept-ranges': 'bytes' };
+    const range = req.headers.range;
+    if (range) {
+      const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+      if (!match || (!match[1] && !match[2])) {
+        res.writeHead(416, { ...headers, 'content-range': `bytes */${stat.size}` });
+        return res.end();
+      }
+      const start = match[1] ? Number(match[1]) : Math.max(0, stat.size - Number(match[2]));
+      const end = match[2] && match[1] ? Math.min(Number(match[2]), stat.size - 1) : stat.size - 1;
+      if (start >= stat.size || start > end || !Number.isSafeInteger(start) || !Number.isSafeInteger(end)) {
+        res.writeHead(416, { ...headers, 'content-range': `bytes */${stat.size}` });
+        return res.end();
+      }
+      res.writeHead(206, { ...headers, 'content-length': end - start + 1, 'content-range': `bytes ${start}-${end}/${stat.size}` });
+      return fs.createReadStream(file, { start, end }).pipe(res);
+    }
+    res.writeHead(200, { ...headers, 'content-length': stat.size });
+    fs.createReadStream(file).pipe(res);
+  });
+}
+
 async function handle(req, res) {
   const forwardedProtocol = process.env.TRUST_PROXY === 'true' ? String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase() : '';
   const protocol = forwardedProtocol === 'https' ? 'https' : req.socket?.encrypted ? 'https' : 'http';
@@ -569,7 +599,7 @@ async function handle(req, res) {
     saveDocument(doc);
     return json(res, 200, { document: { ...toClient(doc), history: doc.history, extractedText: doc.extractedText, fields: doc.fields, validationErrors: doc.validationErrors } });
   }
-  if (req.method === 'GET') return serveStatic(res, p);
+  if (req.method === 'GET') return /^\/assets\/[A-Za-z0-9._-]+\.mp4$/i.test(p) ? serveStaticVideo(req, res, p) : serveStatic(res, p);
   return json(res, 404, { error: 'Route not found.' });
 }
 
