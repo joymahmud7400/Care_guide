@@ -18,8 +18,8 @@ export default function App() {
   const [selectedIds, setSelectedIds] = useState([]); const [comparison, setComparison] = useState(null); const [comparing, setComparing] = useState(false);
   const [teamUsers, setTeamUsers] = useState([]); const [showTeam, setShowTeam] = useState(false); const [employeeName, setEmployeeName] = useState(''); const [employeeEmail, setEmployeeEmail] = useState('');
   const [roleChanges, setRoleChanges] = useState({});
-  const [busy, setBusy] = useState(false); const [toast, setToast] = useState(''); const [dragging, setDragging] = useState(false);
-  const fileInput = useRef(null); const toastTimer = useRef(null); const connectionWarning = useRef(false);
+  const [busy, setBusy] = useState(false); const [savingReview, setSavingReview] = useState(false); const [toast, setToast] = useState(''); const [dragging, setDragging] = useState(false);
+  const fileInput = useRef(null); const toastTimer = useRef(null); const connectionWarning = useRef(false); const savingReviewRef = useRef(false);
   const notify = useCallback(message => { setToast(message); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToast(''), 3000); }, []);
   const refresh = useCallback(async () => {
     try { const calls = [api('/api/documents'), api('/api/metrics')]; if (authUser?.role === 'admin') calls.push(api('/api/admin/users')); const [d, m, team] = await Promise.all(calls); setDocuments(d.documents || []); setMetrics(m); if (team) setTeamUsers(team.users || []); connectionWarning.current = false; }
@@ -67,11 +67,23 @@ export default function App() {
   function closeDoc() { setSelectedId(null); setDetail(null); }
   function updateField(key, value) { setFields(current => ({ ...current, [key]: value })); }
   async function saveReview(event) {
-    event.preventDefault(); if (!selectedId) return;
-    const payload = { ...fields, lineItems: lineItems.map(item => ({ ...item, quantity: item.quantity === '' ? null : Number(item.quantity), unitPrice: item.unitPrice === '' ? null : Number(item.unitPrice), amount: item.amount === '' ? null : Number(item.amount) })) }; for (const key of ['subtotal','tax','total']) payload[key] = payload[key] === '' ? null : Number(payload[key]);
+    event.preventDefault(); if (!selectedId || savingReviewRef.current) return;
+    const toOptionalNumber = value => value == null || String(value).trim() === '' ? null : Number(value);
+    const payload = { ...fields, lineItems: lineItems.map(item => ({ ...item, quantity: toOptionalNumber(item.quantity), unitPrice: toOptionalNumber(item.unitPrice), amount: toOptionalNumber(item.amount) })) };
+    for (const key of ['subtotal','tax','total']) payload[key] = toOptionalNumber(payload[key]);
     for (const key of ['invoiceNumber','invoiceDate','supplierName','customerName','currency']) payload[key] = String(payload[key] || '').trim() || null;
-    try { const result = await api(`/api/documents/${encodeURIComponent(selectedId)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fields: payload, documentType }) }); setDetail(result.document); notify('Review saved.'); await refresh(); }
-    catch (error) { notify(error.message); }
+    savingReviewRef.current = true;
+    setSavingReview(true);
+    try {
+      const result = await api(`/api/documents/${encodeURIComponent(selectedId)}`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fields: payload, documentType }) });
+      const saved = result.document.fields || payload;
+      setDetail(result.document);
+      setFields({ invoiceNumber: saved.invoiceNumber ?? '', invoiceDate: saved.invoiceDate ?? '', supplierName: saved.supplierName ?? '', customerName: saved.customerName ?? '', subtotal: saved.subtotal ?? '', tax: saved.tax ?? '', total: saved.total ?? '', currency: saved.currency ?? '' });
+      setLineItems(saved.lineItems || []);
+      notify('Review saved.');
+      await refresh();
+    } catch (error) { notify(error.message); }
+    finally { savingReviewRef.current = false; setSavingReview(false); }
   }
   async function retry() { if (!selectedId) return; try { await api(`/api/documents/${encodeURIComponent(selectedId)}/reprocess`, { method: 'POST' }); notify('Retry started.'); await refresh(); } catch (error) { notify(error.message); } }
   function toggleSelected(id) { setSelectedIds(current => current.includes(id) ? current.filter(value => value !== id) : [...current, id]); setComparison(null); }
@@ -112,9 +124,9 @@ export default function App() {
         <div className="drawer-type"><label htmlFor="docType">Document type</label><select id="docType" value={documentType} onChange={e=>setDocumentType(e.target.value)}><option value="invoice">Invoice</option><option value="not_invoice">Not an invoice</option><option value="unknown">Unclear / needs review</option></select></div>
         <form onSubmit={saveReview}>{documentType==='not_invoice'?<div className="subtle-note type-note">Invoice fields are hidden because this file is classified as not an invoice. If this is actually an invoice, change the document type above.</div>:<><div className="fields-grid">{[['invoiceNumber','Invoice number'],['invoiceDate','Invoice date'],['supplierName','Supplier'],['customerName','Customer'],['subtotal','Subtotal'],['tax','Tax'],['total','Total'],['currency','Currency']].map(([key,label])=><label key={key} className={['supplierName','customerName'].includes(key)?'wide':''}>{label}<input value={fields[key]??''} onChange={e=>updateField(key,e.target.value)} inputMode={['subtotal','tax','total'].includes(key)?'decimal':undefined}/></label>)}</div>
           <div className="validation-list">{(detail.validationErrors||[]).length?<><div className="validation-title">CHECK THESE FIELDS</div>{detail.validationErrors.map((error,index)=><div className="validation-item" key={index}>⚠ {error.message||error}</div>)}</>:documentType==='invoice'&&<div className="validation-ok">✓ No validation issues found.</div>}</div>
-          <div className="line-items-area"><div className="line-heading">LINE ITEMS <span>Editable</span></div>{lineItems.length?lineItems.map((item,i)=><div className="line-edit-row" key={i}><input aria-label="Description" value={item.description||''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,description:e.target.value}:row))}/><input aria-label="Quantity" inputMode="decimal" value={item.quantity??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,quantity:e.target.value}:row))}/><input aria-label="Unit price" inputMode="decimal" value={item.unitPrice??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,unitPrice:e.target.value}:row))}/><input aria-label="Amount" inputMode="decimal" value={item.amount??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,amount:e.target.value}:row))}/><button type="button" className="remove-line" aria-label="Remove line item" onClick={()=>setLineItems(current=>current.filter((_,index)=>index!==i))}>×</button></div>):<div className="subtle-note">No line items extracted.</div>}<button type="button" className="add-line" onClick={()=>setLineItems(current=>[...current,{description:'',quantity:1,unitPrice:'',amount:''}])}>＋ Add line item</button></div></>}
+          <div className="line-items-area"><div className="line-heading">LINE ITEMS <span>Editable</span></div>{lineItems.length?lineItems.map((item,i)=><div className="line-edit-row" key={i}><label className="line-edit-field">Description<input aria-label={`Item ${i+1} description`} value={item.description||''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,description:e.target.value}:row))}/></label><label className="line-edit-field">Qty<input type="number" min="0" step="any" aria-label={`Item ${i+1} quantity`} value={item.quantity??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,quantity:e.target.value}:row))}/></label><label className="line-edit-field">Unit price<input type="number" min="0" step="any" aria-label={`Item ${i+1} unit price`} value={item.unitPrice??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,unitPrice:e.target.value}:row))}/></label><label className="line-edit-field">Amount<input type="number" min="0" step="any" aria-label={`Item ${i+1} amount`} value={item.amount??''} onChange={e=>setLineItems(current=>current.map((row,index)=>index===i?{...row,amount:e.target.value}:row))}/></label><button type="button" className="remove-line" aria-label={`Remove item ${i+1}`} onClick={()=>setLineItems(current=>current.filter((_,index)=>index!==i))}>×</button></div>):<div className="subtle-note">No line items extracted.</div>}<button type="button" className="add-line" onClick={()=>setLineItems(current=>[...current,{description:'',quantity:1,unitPrice:'',amount:''}])}>＋ Add line item</button></div></>}
           <div className="source-text"><details><summary>View extracted text</summary><pre>{detail.extractedText||'No text extracted yet.'}</pre></details><details className="history-details"><summary>Processing history</summary>{(detail.history||[]).slice().reverse().map((entry,i)=><div className="history-item" key={i}><b>{entry.status}</b><span>{entry.message}</span><time>{escDate(entry.at)}</time></div>)}</details></div>
-          <div className="drawer-actions">{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<button type="submit" className="primary">Save review</button></div>
+          <div className="drawer-actions">{detail.status==='Failed'&&<button type="button" className="secondary" onClick={retry}>Retry processing</button>}<button type="submit" className="primary" disabled={savingReview}>{savingReview?'Saving review…':'Save review'}</button></div>
         </form></>}
     </aside>
     <div className={`toast ${toast?'show':''}`}>{toast}</div>
